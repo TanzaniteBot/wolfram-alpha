@@ -1,6 +1,6 @@
 # NPM
 node_modules/
-tests/
+test/
 .gitignore
 .npmignore
-.eslintrc
+.eslintrc.js

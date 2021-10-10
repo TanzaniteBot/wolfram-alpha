@@ -1,6 +1,6 @@
 {
   "name": "@notenoughupdates/wolfram-alpha-api",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "Wolfram|Alpha API Libraries",
   "homepage": "https://products.wolframalpha.com/api/",
   "main": "./dist/WolframAlphaAPI.js",
