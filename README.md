@@ -1,11 +1,11 @@
-# wolfram-alpha-api
+# fork of wolfram-alpha-api
 
 Copyright (c) 2018, Wolfram Alpha LLC. Licensed under a [Creative Commons
 Attribution-NonCommercial 4.0 International License][CC-BY-NC-4.0].
 
 ## Wolfram|Alpha APIs NPM Library
 
-This is a class that allows Node.js applications/backends to simply call 
+This is a class that allows Node.js applications/backends to simply call
 (some of) the [Wolfram|Alpha APIs][api].
 
 Before you can use any of the APIs described below, you will need an 'AppID'
@@ -187,6 +187,6 @@ waApi.getSpoken({
 [dp]: https://developer.wolframalpha.com/portal/myapps/
 [fr]: https://products.wolframalpha.com/api/documentation/
 [fr-pr]: https://products.wolframalpha.com/api/documentation/#parameter-reference
-[s]: https://products.wolframalpha.com/simple-api/documentation/ 
+[s]: https://products.wolframalpha.com/simple-api/documentation/
 [sa]: https://products.wolframalpha.com/short-answers-api/documentation/
 [sr]: https://products.wolframalpha.com/spoken-results-api/documentation/
