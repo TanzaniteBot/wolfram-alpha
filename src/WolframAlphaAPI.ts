@@ -1,12 +1,8 @@
-/**
- * @module wolfram-alpha-api
- */
+import https from "https";
+import querystring from "querystring";
 
-import https from 'https';
-import querystring from 'querystring';
-
-const baseApiUrl = 'https://api.wolframalpha.com/';
-const createApiParamsRejectMsg = 'method only receives string or object';
+const baseApiUrl = "https://api.wolframalpha.com/";
+const createApiParamsRejectMsg = "method only receives string or object";
 
 /**
  * We support four 'output' formats:
@@ -14,12 +10,12 @@ const createApiParamsRejectMsg = 'method only receives string or object';
  * 'json' is an Object (a result of JSON.parse), and
  * 'image' is a string of a "Data URI"
  */
-type OutputFormat = 'string' | 'json' | 'image' | 'xml';
+type OutputFormat = "string" | "json" | "image" | "xml";
 
 /**
  * @example {url: 'https://api.wolframalpha.com/v1/result?appid=DEMO&i=2%2B2', output: 'string'}
  */
-interface FetchParams {
+export interface FetchParams {
 	/** full URL of api call */
 	url: string;
 	/** which OutputFormat do we want? */
@@ -29,7 +25,7 @@ interface FetchParams {
 /**
  * @example {data: '4', output: 'string', statusCode: 200, contentType: 'text/plain;charset=utf-8'}
  */
-interface FormatParams {
+export interface FormatParams {
 	/** data returned by fetchResults */
 	data: string;
 	/** which OutputFormat do we want? */
@@ -62,14 +58,14 @@ type DataURI = string;
 function createApiParams(
 	baseUrl: string,
 	input: string | Record<string, string | number | boolean | undefined>,
-	output: OutputFormat = 'string'
+	output: OutputFormat = "string"
 ): Promise<FetchParams> {
 	return new Promise((resolve, reject) => {
 		switch (typeof input) {
-			case 'string':
+			case "string":
 				resolve({ url: `${baseUrl}&i=${encodeURIComponent(input)}`, output });
 				break;
-			case 'object':
+			case "object":
 				resolve({ url: `${baseUrl}&${querystring.stringify(input)}`, output });
 				break;
 			default:
@@ -111,23 +107,23 @@ function fetchResults(params: FetchParams): Promise<FormatParams> {
 	const { url, output } = params;
 	return new Promise((resolve, reject) => {
 		https
-			.get(url, (res) => {
+			.get(url, res => {
 				const statusCode = res.statusCode;
-				const contentType = res.headers['content-type'];
-				if (output === 'image' && statusCode === 200) {
-					res.setEncoding('base64'); // API returns binary data, we want base64 for the Data URI
+				const contentType = res.headers["content-type"];
+				if (output === "image" && statusCode === 200) {
+					res.setEncoding("base64"); // API returns binary data, we want base64 for the Data URI
 				} else {
-					res.setEncoding('utf8');
+					res.setEncoding("utf8");
 				}
-				let data = '';
-				res.on('data', (chunk) => {
+				let data = "";
+				res.on("data", chunk => {
 					data += chunk;
 				});
-				res.on('end', () => {
+				res.on("end", () => {
 					resolve({ data, output, statusCode: statusCode!, contentType: contentType! });
 				});
 			})
-			.on('error', (e) => {
+			.on("error", e => {
 				reject(e);
 			});
 	});
@@ -164,14 +160,14 @@ function formatResults(params: FormatParams): Promise<Record<string, string | nu
 	return new Promise((resolve, reject) => {
 		if (statusCode === 200) {
 			switch (output) {
-				case 'json':
+				case "json":
 					try {
 						resolve(JSON.parse(data).queryresult);
 					} catch (e) {
-						reject(new Error('Temporary problem in parsing JSON, please try again.'));
+						reject(new Error("Temporary problem in parsing JSON, please try again."));
 					}
 					break;
-				case 'image':
+				case "image":
 					resolve(`data:${contentType};base64,${data}`);
 					break;
 				default:
@@ -180,7 +176,7 @@ function formatResults(params: FormatParams): Promise<Record<string, string | nu
 			// if (statusCode !== 200)...
 		} else if (/^text\/html/.test(contentType)) {
 			// Rarely, there may be a catastrophic error where the API gives an HTML error page.
-			reject(new Error('Temporary problem with the API, please try again.'));
+			reject(new Error("Temporary problem with the API, please try again."));
 		} else {
 			// This runs if non-full API input is empty, ambiguous, or otherwise invalid.
 			reject(new Error(data));
@@ -191,7 +187,7 @@ function formatResults(params: FormatParams): Promise<Record<string, string | nu
 /**
  * Wolfram|Alpha API NPM Library
  */
-class WolframAlphaAPI {
+export class WolframAlphaAPI {
 	public appid: string;
 	/**
 	 * You may get your 'appid' at {@link https://developer.wolframalpha.com/portal/myapps/}.
@@ -203,8 +199,8 @@ class WolframAlphaAPI {
 	 * const waApi = WolframAlphaAPI('DEMO-APPID');
 	 */
 	constructor(appid: string) {
-		if (!appid || typeof appid !== 'string') {
-			throw new TypeError('appid must be non-empty string');
+		if (!appid || typeof appid !== "string") {
+			throw new TypeError("appid must be non-empty string");
 		}
 		this.appid = appid;
 	}
@@ -227,7 +223,7 @@ class WolframAlphaAPI {
 	 */
 	public async getSimple(input: string | Record<string, string | number | boolean | undefined>): Promise<DataURI> {
 		const baseUrl = `${baseApiUrl}v1/simple?appid=${this.appid}`;
-		const params = await createApiParams(baseUrl, input, 'image');
+		const params = await createApiParams(baseUrl, input, "image");
 		const params_1 = await fetchResults(params);
 		return formatResults(params_1) as Promise<string>;
 	}
@@ -301,14 +297,14 @@ class WolframAlphaAPI {
 		// This promise works just like createApiParams, except with a bit more processing
 		const params = ((): FetchParams => {
 			switch (typeof input) {
-				case 'string':
+				case "string":
 					return {
 						url: `${baseUrl}&input=${encodeURIComponent(input)}&output=json`,
-						output: 'json'
+						output: "json"
 					};
-				case 'object': {
+				case "object": {
 					// the API defaults to XML, but we want to default to JSON.
-					const options = Object.assign({ output: 'json' }, input);
+					const options = Object.assign({ output: "json" }, input);
 					// since all other APIs use 'i' instead of 'input', allow for 'i'.
 					if (options.input == null && options.i != null) {
 						options.input = options.i;
@@ -337,6 +333,7 @@ class WolframAlphaAPI {
  * const WolframAlphaAPI = require('wolfram-alpha-api');
  * const waApi = WolframAlphaAPI('DEMO-APPID');
  */
-export default function initializeClass(appid: string) {
+export function initializeClass(appid: string) {
 	return new WolframAlphaAPI(appid);
 }
+export default initializeClass;
