@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"module": "CommonJS",
-		"target": "ES2021",
+		"target": "ES2022",
 		"outDir": "dist",
 		"forceConsistentCasingInFileNames": true,
 		"esModuleInterop": true,
@@ -14,8 +14,6 @@
 		"declarationMap": true,
 		"declaration": true,
 		"sourceMap": true,
-		"noEmitHelpers": true,
-		"importHelpers": true
 	},
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules", "dist"]
