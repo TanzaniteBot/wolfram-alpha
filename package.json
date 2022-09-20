@@ -1,48 +1,35 @@
 {
-	"name": "@notenoughupdates/wolfram-alpha-api",
-	"version": "1.0.2",
+	"name": "@tanzanite/wolfram-alpha",
+	"version": "1.1.0",
 	"description": "Wolfram|Alpha API Libraries",
-	"homepage": "https://products.wolframalpha.com/api/",
-	"main": "./dist/WolframAlphaAPI.js",
-	"types": "./dist/WolframAlphaAPI.d.ts",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"author": "Cody Woodard <codyw@wolfram.com>",
+	"type": "module",
 	"license": "CC-BY-NC-4.0",
-	"devDependencies": {
-		"@types/node": "^17.0.42",
-		"chai": "^4.3.6",
-		"chai-as-promised": "^7.1.1",
-		"dotenv": "^16.0.1",
-		"eslint": "^8.17.0",
-		"eslint-config-airbnb-base": "^15.0.0",
-		"eslint-plugin-import": "^2.26.0",
-		"jsdoc": "^3.6.10",
-		"minami": "^1.2.3",
-		"mocha": "^10.0.0",
-		"prettier": "^2.6.2",
-		"rimraf": "^3.0.2",
-		"typescript": "^4.7.3"
+	"keywords": [
+		"wolfram-alpha",
+		"wolfram-alpha-api",
+		"Wolfram|Alpha"
+	],
+	"homepage": "https://products.wolframalpha.com/api/",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/TanzaniteBot/wolfram-alpha"
+	},
+	"bugs": {
+		"url": "https://github.com/TanzaniteBot/wolfram-alpha/issues"
 	},
 	"scripts": {
-		"lint": "eslint . && exit 0",
-		"test": "mocha --timeout 10000",
-		"create-docs": "jsdoc dist/WolframAlphaAPI.js --readme README.md --template node_modules/minami/",
-		"build": "yarn rimraf dist && yarn tsc",
+		"build": "yarn tsc",
 		"prepare": "yarn build",
 		"format": "yarn prettier . --write"
 	},
-	"prettier": {
-		"useTabs": true,
-		"trailingComma": "none",
-		"arrowParens": "avoid",
-		"printWidth": 120,
-		"overrides": [
-			{
-				"files": "*.md",
-				"options": {
-					"useTabs": false
-				}
-			}
-		]
+	"devDependencies": {
+		"@types/node": "^18.7.18",
+		"dotenv": "^16.0.2",
+		"prettier": "^2.7.1",
+		"typescript": "^4.8.3"
 	},
-	"packageManager": "yarn@3.2.1"
+	"packageManager": "yarn@3.2.3"
 }

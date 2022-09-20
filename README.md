@@ -15,8 +15,8 @@ use in the frontend.)
 
 First, import the class, and instantiate it with your 'AppID':
 
-```js
-const WolframAlphaAPI = require("wolfram-alpha-api");
+```ts
+import WolframAlphaAPI from "@tanzanite/wolfram-alpha";
 const waApi = WolframAlphaAPI("DEMO-APPID");
 ```
 
@@ -30,7 +30,7 @@ If 'input' is a string, it will call the [Wolfram|Alpha Full Results API][fr],
 and will return a Promise. This Promise will either resolve with an Object of
 results, or will reject with an Error.
 
-```js
+```ts
 waApi.getFull("sin x").then(console.log).catch(console.error);
 // { success: true, error: false, numpods: 13, datatypes: '', ...
 
@@ -63,7 +63,7 @@ waApi
 'input' may also be an Object of parameters. (For more information, see the
 [Wolfram|Alpha Full Results API Documentation - Parameter Reference][fr-pr])
 
-```js
+```ts
 waApi
   .getFull({
     input: "pikachu",
@@ -83,7 +83,7 @@ waApi
 Note: We are defaulting the 'output' parameter to `'json'`. If you set output
 to `'xml'`, we will resolve a string of XML.
 
-```js
+```ts
 waApi
   .getFull({
     input: "weather in miami",
@@ -104,7 +104,7 @@ If 'input' is a string, it will call the [Wolfram|Alpha Simple API][s],
 and will return a Promise. This Promise will either resolve with a Data URI,
 or will reject with an Error.
 
-```js
+```ts
 waApi.get("where is the ISS?").then(console.log).catch(console.error);
 // "data:image/gif;base64,R0lGODlhHAJlA/cAAAAAAAAEAAgICAsNCxwdHBAUECkqKTk8O..."
 
@@ -123,7 +123,7 @@ waApi
 'input' may also be an Object of parameters. (For more information, see the
 [Wolfram|Alpha Simple API Documentation][s])
 
-```js
+```ts
 waApi
   .getSimple({
     i: "What planes are flying overhead?",
@@ -142,7 +142,7 @@ If 'input' is a string, it will call the [Wolfram|Alpha Short Answers API][sa],
 and will return a Promise. This Promise will either resolve with a string,
 or will reject with an Error.
 
-```js
+```ts
 waApi.getShort("16th president of us").then(console.log).catch(console.error);
 // Abraham Lincoln (from March 4, 1861 to April 15, 1865)
 
@@ -162,7 +162,7 @@ waApi
 'input' may also be an Object of parameters. (For more information, see the
 [Wolfram|Alpha Short Answers API Documentation][sa])
 
-```js
+```ts
 waApi
   .getShort({
     i: "distance between new york and london",
@@ -179,7 +179,7 @@ If 'input' is a string, it will call the [Wolfram|Alpha Spoken Results API][sr],
 and will return a Promise. This Promise will either resolve with a string,
 or will reject with an Error.
 
-```js
+```ts
 waApi.getSpoken("when is labor day in 2020").then(console.log).catch(console.error);
 // "The answer is Monday, September 7, 2020"
 
@@ -199,7 +199,7 @@ waApi
 'input' may also be an Object of parameters. (For more information, see the
 [Wolfram|Alpha Spoken Results API Documentation][sr])
 
-```js
+```ts
 waApi
   .getSpoken({
     i: "how tall is the tallest building in chicago",

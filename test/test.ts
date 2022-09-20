@@ -1,14 +1,10 @@
-/* eslint-disable import/newline-after-import, func-names */
+// todo: fix tests
 
-require("dotenv").config();
-const appid = process.env.APPID;
+import "dotenv/config.js";
+import { describe, it } from "node:test";
+import WolframAlphaAPI from "../dist/index.js";
 
-const WolframAlphaAPI = require("../lib/WolframAlphaAPI.js");
-
-const chai = require("chai");
-const chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
-const expect = chai.expect;
+const appid = process.env.APPID!;
 
 describe("Constructor", () => {
 	it("set appid in constructor", () => {
@@ -22,10 +18,8 @@ describe("Constructor", () => {
 	});
 });
 describe("Methods", () => {
-	let waApi;
-	before(() => {
-		waApi = WolframAlphaAPI(appid);
-	});
+	let waApi = WolframAlphaAPI(appid);
+
 	describe("#getFull", () => {
 		it("must be called with string or object", () => {
 			expect(waApi.getFull()).to.eventually.be.rejectedWith(TypeError);

@@ -3,6 +3,7 @@ node_modules/
 test/
 .gitignore
 .npmignore
-.eslintrc.js
+.eslintrc.json
 .yarn
 .yarnrc.yml
+.prettierrc.json

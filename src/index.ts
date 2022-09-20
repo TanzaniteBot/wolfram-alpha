@@ -16,23 +16,47 @@ type OutputFormat = "string" | "json" | "image" | "xml";
  * @example {url: 'https://api.wolframalpha.com/v1/result?appid=DEMO&i=2%2B2', output: 'string'}
  */
 export interface FetchParams {
-	/** full URL of api call */
+	/**
+	 * full URL of api call
+	 */
 	url: string;
-	/** which OutputFormat do we want? */
+
+	/**
+	 * which OutputFormat do we want?
+	 */
 	output: OutputFormat;
 }
 
 /**
- * @example {data: '4', output: 'string', statusCode: 200, contentType: 'text/plain;charset=utf-8'}
+ * @example
+ * ```
+ * {
+ * 	data: '4',
+ * 	output: 'string',
+ * 	statusCode: 200,
+ * 	contentType: 'text/plain;charset=utf-8'
+ * }
+ * ```
  */
 export interface FormatParams {
-	/** data returned by fetchResults */
+	/**
+	 * data returned by fetchResults
+	 */
 	data: string;
-	/** which OutputFormat do we want? */
+
+	/**
+	 * which OutputFormat do we want?
+	 */
 	output: OutputFormat;
-	/** HTTP status code of fetchResults */
+
+	/**
+	 * HTTP status code of fetchResults
+	 */
 	statusCode: number;
-	/** HTTP content-type header from fetchResults */
+
+	/**
+	 * HTTP content-type header from fetchResults
+	 */
 	contentType: string;
 }
 
@@ -50,28 +74,27 @@ type DataURI = string;
  * //   url: 'https://api.wolframalpha.com/v1/simple?appid=DEMO&i=nyc%20to%la&units=metric',
  * //   output: 'image'
  * // }
- * createApiParams('https://api.wolframalpha.com/v1/simple?appid=DEMO',
- *   {i: 'nyc to la', units: 'metric'}, 'image')
+ * createApiParams(
+ * 	'https://api.wolframalpha.com/v1/simple?appid=DEMO',
+ * 	{ i: 'nyc to la', units: 'metric' },
+ * 	'image'
+ * )
  * // rejects TypeError('method only receives string or object')
  * createApiParams('https://api.wolframalpha.com/v1/result?appid=DEMO')
  */
-function createApiParams(
+async function createApiParams(
 	baseUrl: string,
 	input: string | Record<string, string | number | boolean | undefined>,
 	output: OutputFormat = "string"
 ): Promise<FetchParams> {
-	return new Promise((resolve, reject) => {
-		switch (typeof input) {
-			case "string":
-				resolve({ url: `${baseUrl}&i=${encodeURIComponent(input)}`, output });
-				break;
-			case "object":
-				resolve({ url: `${baseUrl}&${querystring.stringify(input)}`, output });
-				break;
-			default:
-				reject(new TypeError(createApiParamsRejectMsg));
-		}
-	});
+	switch (typeof input) {
+		case "string":
+			return { url: `${baseUrl}&i=${encodeURIComponent(input)}`, output };
+		case "object":
+			return { url: `${baseUrl}&${querystring.stringify(input)}`, output };
+		default:
+			throw new TypeError(createApiParamsRejectMsg);
+	}
 }
 
 /**
@@ -155,33 +178,29 @@ function fetchResults(params: FetchParams): Promise<FormatParams> {
  *   output: 'image', statusCode: 501, contentType: 'text/plain;charset=utf-8'
  * })
  */
-function formatResults(params: FormatParams): Promise<Record<string, string | number | boolean> | string> {
+async function formatResults(params: FormatParams): Promise<Record<string, string | number | boolean> | string> {
 	const { data, output, statusCode, contentType } = params;
-	return new Promise((resolve, reject) => {
-		if (statusCode === 200) {
-			switch (output) {
-				case "json":
-					try {
-						resolve(JSON.parse(data).queryresult);
-					} catch (e) {
-						reject(new Error("Temporary problem in parsing JSON, please try again."));
-					}
-					break;
-				case "image":
-					resolve(`data:${contentType};base64,${data}`);
-					break;
-				default:
-					resolve(data);
-			}
-			// if (statusCode !== 200)...
-		} else if (/^text\/html/.test(contentType)) {
-			// Rarely, there may be a catastrophic error where the API gives an HTML error page.
-			reject(new Error("Temporary problem with the API, please try again."));
-		} else {
-			// This runs if non-full API input is empty, ambiguous, or otherwise invalid.
-			reject(new Error(data));
+	if (statusCode === 200) {
+		switch (output) {
+			case "json":
+				try {
+					return JSON.parse(data).queryresult;
+				} catch (e) {
+					throw new Error("Temporary problem in parsing JSON, please try again.");
+				}
+			case "image":
+				return `data:${contentType};base64,${data}`;
+			default:
+				return data;
 		}
-	});
+		// if (statusCode !== 200)...
+	} else if (/^text\/html/.test(contentType)) {
+		// Rarely, there may be a catastrophic error where the API gives an HTML error page.
+		throw new Error("Temporary problem with the API, please try again.");
+	} else {
+		// This runs if non-full API input is empty, ambiguous, or otherwise invalid.
+		throw new Error(data);
+	}
 }
 
 /**
@@ -189,6 +208,7 @@ function formatResults(params: FormatParams): Promise<Record<string, string | nu
  */
 export class WolframAlphaAPI {
 	public appid: string;
+
 	/**
 	 * You may get your 'appid' at {@link https://developer.wolframalpha.com/portal/myapps/}.
 	 * Remember, this appID must be kept secret.
@@ -224,8 +244,8 @@ export class WolframAlphaAPI {
 	public async getSimple(input: string | Record<string, string | number | boolean | undefined>): Promise<DataURI> {
 		const baseUrl = `${baseApiUrl}v1/simple?appid=${this.appid}`;
 		const params = await createApiParams(baseUrl, input, "image");
-		const params_1 = await fetchResults(params);
-		return formatResults(params_1) as Promise<string>;
+		const results = await fetchResults(params);
+		return formatResults(results) as Promise<string>;
 	}
 
 	/**
@@ -247,8 +267,8 @@ export class WolframAlphaAPI {
 	public async getShort(input: string | Record<string, string | number | boolean | undefined>): Promise<string> {
 		const baseUrl = `${baseApiUrl}v1/result?appid=${this.appid}`;
 		const params = await createApiParams(baseUrl, input);
-		const params_1 = await fetchResults(params);
-		return formatResults(params_1) as Promise<string>;
+		const results = await fetchResults(params);
+		return formatResults(results) as Promise<string>;
 	}
 
 	/**
@@ -270,8 +290,8 @@ export class WolframAlphaAPI {
 	public async getSpoken(input: string | Record<string, string | number | boolean | undefined>): Promise<string> {
 		const baseUrl = `${baseApiUrl}v1/spoken?appid=${this.appid}`;
 		const params = await createApiParams(baseUrl, input);
-		const params_1 = await fetchResults(params);
-		return formatResults(params_1) as Promise<string>;
+		const results = await fetchResults(params);
+		return formatResults(results) as Promise<string>;
 	}
 
 	/**
@@ -319,8 +339,8 @@ export class WolframAlphaAPI {
 					throw new TypeError(createApiParamsRejectMsg);
 			}
 		})();
-		const params_1 = await fetchResults(params);
-		return formatResults(params_1);
+		const results = await fetchResults(params);
+		return formatResults(results);
 	}
 }
 
@@ -336,4 +356,5 @@ export class WolframAlphaAPI {
 export function initializeClass(appid: string) {
 	return new WolframAlphaAPI(appid);
 }
+
 export default initializeClass;
